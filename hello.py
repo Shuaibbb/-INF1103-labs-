@@ -22,3 +22,14 @@ print("Day 2", followers)
 
 followers -= 10  
 print("Day 3", followers)
+
+#Activity 4
+username = input("Enter your new username: ")
+age = input("Enter your new age: ")
+category = input("Enter content category: ")
+
+print ("\nInstagream Profile Update:")
+print ("==================================")
+print("Username:", username)
+print("Age:", age)
+print("Category:", category)    
