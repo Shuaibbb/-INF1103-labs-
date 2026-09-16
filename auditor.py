@@ -10,6 +10,13 @@ while True:
         quantity = int(stock)
         inventory = inventory + quantity
         print("Current inventory:", inventory)
+
+        if inventory > 500:
+            print("Overstock alert")
+            break
     else:
         print("Invalid stock quantity")
         failed_entries = failed_entries + 1
+
+print("Total Units Processed:", inventory)
+print("Number of Failed/Rejected Entries:", failed_entries)
