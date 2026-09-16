@@ -6,3 +6,10 @@ while True:
 
     if stock == "quit":
         break
+    elif stock.isdigit():
+        quantity = int(stock)
+        inventory = inventory + quantity
+        print("Current inventory:", inventory)
+    else:
+        print("Invalid stock quantity")
+        failed_entries = failed_entries + 1
