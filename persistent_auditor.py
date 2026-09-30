@@ -45,6 +45,16 @@ def load_inventory():
         return 0, []
 
 
+def save_inventory(total, history):
+    file = open("inventory.txt", "w")
+
+    file.write(str(total) + "\n")
+
+    for transaction in history:
+        file.write(str(transaction) + "\n")
+
+    file.close()
+
 inventory, transaction_history = load_inventory()
 failed_entries = 0
 deliveries_processed = 0
@@ -74,3 +84,6 @@ while True:
 print("Total Deliveries Processed:", deliveries_processed)
 print("Transaction History:", transaction_history)
 generate_report(inventory, failed_entries)
+
+save_inventory(inventory, transaction_history)
+print("Inventory successfully saved to inventory.txt")
