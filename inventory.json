@@ -22,5 +22,17 @@
         "name": "Monitor",
         "price": 299.99,
         "stock": 10
+    },
+    {
+        "id": "P005",
+        "name": "Headset",
+        "price": 279.49,
+        "stock": 78
+    },
+    {
+        "id": "P006",
+        "name": "Webcam",
+        "price": 59.9,
+        "stock": 30
     }
 ]
