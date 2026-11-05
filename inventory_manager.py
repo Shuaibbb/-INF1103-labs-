@@ -1,10 +1,17 @@
-
 from inventory import Inventory
-from product import Product
+from product import PhysicalProduct, DigitalProduct
 
 
 def add_product(inventory):
     print("\nAdd New Product")
+    print("1. Physical Product")
+    print("2. Digital Product")
+
+    product_type = input("Select product type: ")
+
+    if product_type not in ("1", "2"):
+        print("Invalid product type.")
+        return
 
     product_id = input("Product ID: ").strip()
 
@@ -26,7 +33,30 @@ def add_product(inventory):
             print("Price and stock cannot be negative.")
             return
 
-        product = Product(product_id, name, price, stock)
+        if product_type == "1":
+            weight = float(input("Weight (kg): "))
+
+            if weight < 0:
+                print("Weight cannot be negative.")
+                return
+
+            product = PhysicalProduct(
+                product_id, name, price, stock, weight
+            )
+
+        else:
+            download_size = float(
+                input("Download Size (MB): ")
+            )
+
+            if download_size < 0:
+                print("Download size cannot be negative.")
+                return
+
+            product = DigitalProduct(
+                product_id, name, price, stock, download_size
+            )
+
         inventory.add_product(product)
 
     except ValueError:
@@ -65,6 +95,7 @@ def search_product(inventory):
         print("\nProduct Found")
         print("--------------------------------")
         product.display_information()
+        print("Fulfilment:", product.get_fulfilment_info())
         print("--------------------------------")
     else:
         print("Product not found.")
@@ -80,7 +111,8 @@ def main():
         print("3. Update Stock")
         print("4. Search Product")
         print("5. Save Inventory")
-        print("6. Exit")
+        print("6. Load Inventory")
+        print("7. Exit")
         print("----------------------------")
 
         option = input("Enter option: ")
@@ -101,6 +133,9 @@ def main():
             inventory.save_inventory()
 
         elif option == "6":
+            inventory.load_inventory()
+
+        elif option == "7":
             print("Saving inventory before exit...")
             inventory.save_inventory()
             print("Thank you for using Inventory Management System.")
