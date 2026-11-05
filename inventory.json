@@ -1,38 +1,18 @@
 [
     {
         "id": "P001",
-        "name": "Laptop",
-        "price": 1200.0,
-        "stock": 15
+        "name": "Guitar",
+        "price": 300.0,
+        "stock": 20,
+        "type": "physical",
+        "weight": 5.0
     },
     {
-        "id": "P002",
-        "name": "Mouse",
-        "price": 25.5,
-        "stock": 50
-    },
-    {
-        "id": "P003",
-        "name": "Keyboard",
-        "price": 45.0,
-        "stock": 25
-    },
-    {
-        "id": "P004",
-        "name": "Monitor",
-        "price": 299.99,
-        "stock": 10
-    },
-    {
-        "id": "P005",
-        "name": "Headset",
-        "price": 279.49,
-        "stock": 78
-    },
-    {
-        "id": "P006",
-        "name": "Webcam",
-        "price": 59.9,
-        "stock": 30
+        "id": "D001",
+        "name": "Microsoft",
+        "price": 69.99,
+        "stock": 150,
+        "type": "digital",
+        "download_size": 1024.0
     }
 ]
