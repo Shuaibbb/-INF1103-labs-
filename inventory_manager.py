@@ -1,8 +1,10 @@
+
 from inventory import Inventory
 from product import PhysicalProduct, DigitalProduct
+from supplier import Supplier
 
 
-def add_product(inventory):
+def add_product(inventory: Inventory) -> None:
     print("\nAdd New Product")
     print("1. Physical Product")
     print("2. Digital Product")
@@ -15,11 +17,33 @@ def add_product(inventory):
 
     product_id = input("Product ID: ").strip()
 
-    if inventory.search_product(product_id) is not None:
+    if inventory.find_product(product_id) is not None:
         print("Product ID already exists.")
         return
 
     name = input("Product Name: ").strip()
+
+    print("\nSupplier Details")
+    supplier_id = input("Supplier ID: ").strip()
+    supplier_name = input("Supplier Name: ").strip()
+    supplier_email = input("Supplier Email: ").strip()
+
+    if not supplier_id or not supplier_name or not supplier_email:
+        print("All supplier fields are required.")
+        return
+
+    # Reuse an existing supplier if the ID matches
+    supplier = None
+
+    for existing_product in inventory.products:
+        if existing_product.supplier.supplier_id == supplier_id:
+            supplier = existing_product.supplier
+            break
+
+    if supplier is None:
+        supplier = Supplier(
+            supplier_id, supplier_name, supplier_email
+        )
 
     try:
         price = float(input("Price: "))
@@ -41,7 +65,8 @@ def add_product(inventory):
                 return
 
             product = PhysicalProduct(
-                product_id, name, price, stock, weight
+                product_id, name, price, stock,
+                weight, supplier
             )
 
         else:
@@ -54,27 +79,27 @@ def add_product(inventory):
                 return
 
             product = DigitalProduct(
-                product_id, name, price, stock, download_size
+                product_id, name, price, stock,
+                download_size, supplier
             )
 
         inventory.add_product(product)
 
-    except ValueError:
-        print("Invalid input. Please enter valid numbers.")
+    except ValueError as error:
+        print("Invalid input:", error)
 
 
-def update_stock(inventory):
+def update_stock(inventory: Inventory) -> None:
     print("\nUpdate Stock")
     product_id = input("Enter Product ID: ").strip()
 
-    product = inventory.search_product(product_id)
+    product = inventory.find_product(product_id)
 
     if product is None:
         print("Product not found.")
         return
 
-    print("Product Found:")
-    print("Name:", product.name)
+    print("Product:", product.name)
     print("Current Stock:", product.stock)
 
     try:
@@ -85,23 +110,24 @@ def update_stock(inventory):
         print("Invalid stock quantity:", error)
 
 
-def search_product(inventory):
+def search_product(inventory: Inventory) -> None:
     print("\nSearch Product")
     product_id = input("Enter Product ID: ").strip()
 
-    product = inventory.search_product(product_id)
+    product = inventory.find_product(product_id)
 
-    if product is not None:
-        print("\nProduct Found")
-        print("--------------------------------")
-        product.display_information()
-        print("Fulfilment:", product.get_fulfilment_info())
-        print("--------------------------------")
-    else:
+    if product is None:
         print("Product not found.")
+        return
+
+    print("\nProduct Found")
+    print("--------------------------------")
+    product.display_information()
+    print("Fulfilment:", product.get_fulfilment_info())
+    print("--------------------------------")
 
 
-def main():
+def main() -> None:
     inventory = Inventory()
 
     while True:
@@ -115,7 +141,7 @@ def main():
         print("7. Exit")
         print("----------------------------")
 
-        option = input("Enter option: ")
+        option = input("Enter option: ").strip()
 
         if option == "1":
             inventory.display_all()
