@@ -1,37 +1,60 @@
+
 import json
 import os
-from product import PhysicalProduct, DigitalProduct
+from product import Product, PhysicalProduct, DigitalProduct
+from supplier import Supplier
 
 
 class Inventory:
-    def __init__(self):
-        self.products = []
+    def __init__(self, filename: str = "inventory.json") -> None:
+        self.products: list[Product] = []
+        self.filename = filename
         self.load_inventory()
 
-    def display_all(self):
+    def display_all(self) -> None:
         print("\nCurrent Inventory")
-        print("------------------------------------------------")
+        print("----------------------------------------")
 
-        if len(self.products) == 0:
+        if not self.products:
             print("Inventory is empty.")
         else:
             for product in self.products:
                 print()
                 product.display_information()
 
-        print("------------------------------------------------")
+        print("----------------------------------------")
 
-    def add_product(self, product):
-        for existing in self.products:
-            if existing.product_id == product.product_id:
-                print("Product ID already exists.")
-                return
+    def add_product(self, product: Product) -> None:
+        if self.find_product(product.product_id) is not None:
+            print("Product ID already exists.")
+            return
 
         self.products.append(product)
         print("Product added successfully!")
 
-    def update_stock(self, product_id, new_stock):
-        product = self.search_product(product_id)
+    def remove_product(self, product_id: str) -> Product | None:
+        product = self.find_product(product_id)
+
+        if product is not None:
+            self.products.remove(product)
+            print("Product removed from inventory.")
+            return product
+
+        print("Product not found.")
+        return None
+
+    def find_product(self, product_id: str) -> Product | None:
+        for product in self.products:
+            if product.product_id == product_id:
+                return product
+        return None
+
+    # Keep this for compatibility with your Lab 7 menu
+    def search_product(self, product_id: str) -> Product | None:
+        return self.find_product(product_id)
+
+    def update_stock(self, product_id: str, new_stock: int) -> None:
+        product = self.find_product(product_id)
 
         if product is not None:
             product.update_stock(new_stock)
@@ -39,81 +62,93 @@ class Inventory:
         else:
             print("Product not found.")
 
-    def search_product(self, product_id):
-        for product in self.products:
-            if product.product_id == product_id:
-                return product
-
-        return None
-
-    def save_inventory(self):
+    def save_inventory(self) -> None:
         data = []
 
         for product in self.products:
-            product_data = {
+            item = {
                 "id": product.product_id,
                 "name": product.name,
                 "price": product.price,
-                "stock": product.stock
+                "stock": product.stock,
+                "supplier": {
+                    "supplier_id": product.supplier.supplier_id,
+                    "name": product.supplier.name,
+                    "contact_email": product.supplier.contact_email
+                }
             }
 
             if isinstance(product, PhysicalProduct):
-                product_data["type"] = "physical"
-                product_data["weight"] = product.weight
+                item["type"] = "physical"
+                item["weight"] = product.weight
 
             elif isinstance(product, DigitalProduct):
-                product_data["type"] = "digital"
-                product_data["download_size"] = product.download_size
+                item["type"] = "digital"
+                item["download_size"] = product.download_size
 
-            data.append(product_data)
+            data.append(item)
 
-        with open("inventory.json", "w") as file:
+        with open(self.filename, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4)
 
-        print("Inventory saved successfully to inventory.json.")
+        print("Inventory saved successfully.")
 
-    def load_inventory(self):
-        if not os.path.exists("inventory.json"):
-            print("inventory.json not found.")
+    def load_inventory(self) -> None:
+        if not os.path.exists(self.filename):
             print("Starting with an empty inventory.")
             return
 
         try:
-            with open("inventory.json", "r") as file:
+            with open(self.filename, "r", encoding="utf-8") as file:
                 data = json.load(file)
 
-            loaded_products = []
+            loaded_products: list[Product] = []
+            suppliers: dict[str, Supplier] = {}
 
             for item in data:
-                product_type = item.get("type", "physical")
+                supplier_data = item.get("supplier", {
+                    "supplier_id": "S000",
+                    "name": "Unknown Supplier",
+                    "contact_email": "unknown@example.com"
+                })
 
-                if product_type == "physical":
+                supplier_id = supplier_data["supplier_id"]
+
+                if supplier_id not in suppliers:
+                    suppliers[supplier_id] = Supplier(
+                        supplier_id,
+                        supplier_data["name"],
+                        supplier_data["contact_email"]
+                    )
+
+                supplier = suppliers[supplier_id]
+
+                if item["type"] == "physical":
                     product = PhysicalProduct(
                         item["id"],
                         item["name"],
                         item["price"],
                         item["stock"],
-                        item.get("weight", 0)
+                        item["weight"],
+                        supplier
                     )
 
-                elif product_type == "digital":
+                elif item["type"] == "digital":
                     product = DigitalProduct(
                         item["id"],
                         item["name"],
                         item["price"],
                         item["stock"],
-                        item["download_size"]
+                        item["download_size"],
+                        supplier
                     )
 
                 else:
-                    print("Unknown product type:", product_type)
-                    continue
+                    raise ValueError("Unknown product type.")
 
                 loaded_products.append(product)
 
             self.products = loaded_products
-
-            print("inventory.json found.")
             print("Inventory loaded successfully.")
 
         except (ValueError, KeyError, TypeError, OSError) as error:
