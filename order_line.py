@@ -6,8 +6,8 @@ class OrderLine:
         if quantity <= 0:
             raise ValueError("Quantity must be greater than zero.")
 
-        self.product: Product = product
-        self.quantity: int = quantity
+        self.product = product
+        self.quantity = quantity
 
     def calculate_subtotal(self) -> float:
         return self.product.price * self.quantity

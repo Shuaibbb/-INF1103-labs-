@@ -1,4 +1,3 @@
-
 import json
 import os
 from product import Product, PhysicalProduct, DigitalProduct

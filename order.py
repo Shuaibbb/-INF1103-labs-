@@ -1,4 +1,3 @@
-
 from product import Product
 from order_line import OrderLine
 from discount_strategy import DiscountStrategy, NoDiscount
