@@ -1,6 +1,7 @@
 from inventory import Inventory
 from product_factory import ProductFactory
 from supplier import Supplier
+from input_helpers import get_positive_float
 
 
 def add_product(inventory: Inventory) -> None:
@@ -45,7 +46,7 @@ def add_product(inventory: Inventory) -> None:
         )
 
     try:
-        price = float(input("Price: "))
+        price = get_positive_float("Price: ")
         stock = int(input("Stock Quantity: "))
 
         if not product_id or not name:
