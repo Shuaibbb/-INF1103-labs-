@@ -2,6 +2,7 @@
 import json
 import os
 from product import Product, PhysicalProduct, DigitalProduct
+from product_factory import ProductFactory
 from supplier import Supplier
 
 
@@ -124,23 +125,25 @@ class Inventory:
                 supplier = suppliers[supplier_id]
 
                 if item["type"] == "physical":
-                    product = PhysicalProduct(
+                    product = ProductFactory.create(
+                        "physical",
                         item["id"],
                         item["name"],
                         item["price"],
                         item["stock"],
-                        item["weight"],
-                        supplier
+                        supplier,
+                        weight=item["weight"]
                     )
 
                 elif item["type"] == "digital":
-                    product = DigitalProduct(
+                    product = ProductFactory.create(
+                        "digital",
                         item["id"],
                         item["name"],
                         item["price"],
                         item["stock"],
-                        item["download_size"],
-                        supplier
+                        supplier,
+                        download_size=item["download_size"]
                     )
 
                 else:

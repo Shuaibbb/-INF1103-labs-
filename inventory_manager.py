@@ -1,6 +1,6 @@
 
 from inventory import Inventory
-from product import PhysicalProduct, DigitalProduct
+from product_factory import ProductFactory
 from supplier import Supplier
 
 
@@ -64,9 +64,9 @@ def add_product(inventory: Inventory) -> None:
                 print("Weight cannot be negative.")
                 return
 
-            product = PhysicalProduct(
-                product_id, name, price, stock,
-                weight, supplier
+            product = ProductFactory.create(
+                "physical", product_id, name, price, 
+                stock,supplier, weight=weight
             )
 
         else:
@@ -78,9 +78,9 @@ def add_product(inventory: Inventory) -> None:
                 print("Download size cannot be negative.")
                 return
 
-            product = DigitalProduct(
-                product_id, name, price, stock,
-                download_size, supplier
+            product = ProductFactory.create(
+                "digital", product_id, name, price,
+                stock, supplier, download_size=download_size
             )
 
         inventory.add_product(product)
